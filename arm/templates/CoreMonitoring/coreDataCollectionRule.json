@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID of the Log Analytics Workspace to be used",
+                "displayName": "Workspace Resource ID"
+            }
+        },
+        "dcrName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Data Collection Rule to deploy",
+                "displayName": "Data Collection Rule Name"
+            },
+            "defaultValue": "Core-CoreMonitoring-dcr"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Insights/dataCollectionRules",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('dcrName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "description": "Data collection rule for Core Core Monitoring",
+                "dataSources": {
+                    "performanceCounters": [
+                        {
+                            "name": "CoreCorePerfCounters",
+                            "streams": [
+                                "Microsoft-Perf"
+                            ],
+                            "scheduledTransferPeriod": "PT1M",
+                            "samplingFrequencyInSeconds": 60,
+                            "counterSpecifiers": [
+                                "\\Processor Information(_Total)\\% Processor Time",
+                                "\\System\\System Up Time",
+                                "\\System\\Processor Queue Length",
+                                "\\Memory\\% Available Memory",
+                                "\\LogicalDisk(*)\\% Free Space",
+                                "\\LogicalDisk(*)\\Free Megabytes"
+                            ]
+                        }
+                    ]
+                },
+                "destinations": {
+                    "logAnalytics": [
+                        {
+                            "workspaceResourceId": "[parameters('workspaceResourceId')]",
+                            "name": "Log-Analytics-Workspace"
+                        }
+                    ]
+                },
+                "dataFlows": [
+                    {
+                    "streams": [
+                        "Microsoft-Perf"
+                    ],
+                    "destinations": [
+                        "Log-Analytics-Workspace"
+                    ]
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}
