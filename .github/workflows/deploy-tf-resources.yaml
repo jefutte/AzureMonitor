@@ -50,26 +50,31 @@ jobs:
       id: fmt
       run: terraform fmt -check
       continue-on-error: true
+      working-directory: ./terraform/tfresources
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       id: init
-      run: terraform init -backend-config=backend.conf
+      run: terraform init
+      working-directory: ./terraform/tfresources
 
     # Verify configuration is syntactically valid and internally consistent, regardless of any provided variables or existing state.
     - name: Terraform Validate
       id: validate
       run: terraform validate
+      working-directory: ./terraform/tfresources
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       id: plan
       run: terraform plan -input=false -out=tfplan
+      working-directory: ./terraform/tfresources
 
     # Output plan
     - name: Terraform Show
       id: show
       run: terraform show -json tfplan > tfplan.json
+      working-directory: ./terraform/tfresources
 
     # PR comment
     - name: Terraform PR Comment
@@ -77,3 +82,8 @@ jobs:
       with:
         json-file: ./tfplan.json
         expand-comment: 'true' 
+      
+    # On push to "main", build or change infrastructure according to Terraform configuration files
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false
+      working-directory: ./terraform/tfresources
