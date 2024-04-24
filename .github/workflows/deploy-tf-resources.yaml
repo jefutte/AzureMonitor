@@ -67,7 +67,7 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       id: plan
-      run: terraform plan -input=false -out=tfplan
+      run: terraform plan -input=false -out=tfplan -var-file="vars.tfvars"
       working-directory: ./terraform/tfresources
 
     # Output plan
@@ -85,5 +85,5 @@ jobs:
       
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
-      run: terraform apply -auto-approve -input=false
+      run: terraform apply -auto-approve -input=false -var-file="vars.tfvars"
       working-directory: ./terraform/tfresources
