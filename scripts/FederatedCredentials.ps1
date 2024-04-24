@@ -1,9 +1,18 @@
-# Creates managed identity and adds Github repo as federated credential, then outputs information needed for Github
-# The managed identity is assigned permissions on the subscription level, as all infrastructure, including resource group are created with code
-#
-# Make sure you are connected to Azure and have access to the subscription to be used
-#
-# Use output to create 3 secret in your Github repo: SUBSCRIPTION_ID, CLIENT_ID, TENANT_ID 
+<#
+.Synopsis
+   Create federated credentials for GitHub
+.DESCRIPTION
+   The script creates a resource group containing a User-Assigned Managed Identity, assigns permissions to that identity on the subscription provided, and creates federated credentials on the identity
+.EXAMPLE
+   Connect-AzAccount 
+   .\FederatedCredentials.ps1 -SubscriptionId "susbcriptionid" -Location "westeurope" -GithubOrganizationName "jefutte" -GithubRepoName "rgName"
+.OUTPUTS
+   Use output to create 3 secret in your Github repo: SUBSCRIPTION_ID, CLIENT_ID, TENANT_ID 
+.NOTES
+   Creator: Jesper Fütterer Bing
+   Blog: cloudpuzzles.net
+#>
+
 
 
 [CmdletBinding()]
