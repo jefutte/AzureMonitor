@@ -18,7 +18,7 @@ resource "azurerm_storage_account" "stg" {
 resource "azurerm_storage_container" "container" {
   name                  = "terraform"
   storage_account_name  = azurerm_storage_account.stg.name
-  container_access_type = private
+  container_access_type = "private"
 }
 
 resource "azurerm_role_assignment" "role" {
