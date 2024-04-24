@@ -1,0 +1,79 @@
+name: 'Deploy Monitoring'
+
+on:
+  workflow_dispatch:
+    inputs:
+      terraform_operation:
+        description: "Terraform operation: plan, apply, destroy"
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    #Checkout repository
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+    
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      id: init
+      run: terraform init -backend-config=backend.conf
+
+    # Verify configuration is syntactically valid and internally consistent, regardless of any provided variables or existing state.
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan -input=false -out=tfplan
+
+    # Output plan
+    - name: Terraform Show
+      id: show
+      run: terraform show -json tfplan > tfplan.json
+
+    # PR comment
+    - name: Terraform PR Comment
+      uses: liatrio/terraform-change-pr-commenter@v1.4.0
+      with:
+        json-file: ./tfplan.json
+        expand-comment: 'true' 
