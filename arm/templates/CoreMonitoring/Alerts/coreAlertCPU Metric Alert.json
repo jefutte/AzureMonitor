@@ -1,24 +1,15 @@
 {
     "properties": {
-        "displayName": "Core Server Monitoring - Deploy Heartbeat alert [Log based]",
+        "displayName": "Core Server Monitoring - Deploy CPU alert",
         "policyType": "Custom",
         "mode": "All",
         "parameters": { 
-            "workspaceResourceId": {
-              "type": "String",
-              "metadata": {
-                "displayName": "Log Analytics workspace",
-                "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
-                "strongType": "omsWorkspace",
-                "assignPermissions": true
-              }
-            },
             "actionGroupId": {
                 "type": "string",
                 "metadata": {
                     "displayName": "Action Group resource ID",
                     "description": "Resource Id of the Action Group"
-                }      
+                }
             },
             "tagName": {
                 "type": "String",
@@ -40,10 +31,6 @@
         "policyRule": {
             "if": { 
                 "allOf": [
-                    {
-                        "field": "[concat('tags[', parameters('tagName'), ']')]",
-                        "equals": "[parameters('tagValue')]"
-                    },
                     {
                         "anyOf": [
                             {
@@ -71,6 +58,10 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "field": "[concat('tags[', parameters('tagName'), ']')]",
+                        "equals": "[parameters('tagValue')]"
                     }
                 ]
             },
@@ -81,7 +72,7 @@
                     "resourceGroupName": "[resourceGroup().name]",
                     "existenceCondition": {
                         "field": "name",
-                        "equals": "[concat('Core ',field('Name'),' Heartbeat')]"
+                        "equals": "[concat('Core ',field('Name'),' High CPU Load')]"
                     },
                     "roleDefinitionIds": [
                         "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
@@ -91,112 +82,67 @@
                         "properties": {
                             "mode": "incremental",
                             "parameters": {
-                                "workspaceResourceId": {
-                                  "value": "[parameters('workspaceResourceId')]"
-                                },
-                                "actionGroupId": {
+                                "actionGroupId":{
                                     "value": "[parameters('actionGroupId')]"
-                                },
-                                "resourceGroup": {
-                                  "value": "[resourceGroup().name]"
                                 },
                                 "vmName": {
                                   "value": "[field('name')]"
-                                }                                
+                                },
+                                "vmId": {
+                                    "value": "[field('id')]"
+                                }                                  
                              },
                             "template": {
                                 "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                                 "contentVersion": "1.0.0.0",
                                 "parameters": {
-                                    "workspaceResourceId": {
-                                    "type": "string" 
-                                    },
-                                    "actionGroupId": {
+                                    "actionGroupId":{
                                         "type": "string"
-                                    },
-                                    "resourceGroup": {
-                                        "type": "string" 
                                     },
                                     "vmName": {
                                         "type": "string" 
+                                    },
+                                    "vmId": {
+                                        "type": "string"
                                     }
                                 },
                                 "variables": {
                                     "subscriptionId": "[subscription().subscriptionId]",
-                                    "alertName": "[concat('Core ',parameters('vmName'),' Heartbeat')]",
-                                    "metricName": "Heartbeat"
+                                    "alertName": "[concat('Core ',parameters('vmName'),' High CPU Load')]",
+                                    "metricName": "Average_% Processor Time"
                                 },
                                 "resources": [
-                                    {
-                                        "type": "microsoft.insights/scheduledqueryrules",
-                                        "apiVersion": "2022-06-15",
-                                        "name": "[concat(variables('alertName'), '-sqr')]",
-                                        "location": "westeurope",
-                                        "tags": {
-                                            "[concat('hidden-link:', parameters('workspaceResourceId'))]": "Resource"
-                                        },
-                                        "kind": "LogToMetric",
-                                        "properties": {
-                                            "enabled": true,
-                                            "scopes": [
-                                                "[parameters('workspaceResourceId')]"
-                                            ],
-                                            "criteria": {
-                                                "allOf": [
-                                                    {
-                                                        "metricName": "[variables('metricName')]",
-                                                        "dimensions": [
-                                                            {
-                                                                "name": "Computer",
-                                                                "operator": "Include",
-                                                                "values": [
-                                                                    "[parameters('vmName')]"
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    },
                                     {
                                         "type": "microsoft.insights/metricAlerts",
                                         "apiVersion": "2018-03-01",
                                         "name": "[variables('alertName')]",
                                         "location": "global",
                                         "properties": {
-                                            "severity": 0,
+                                            "description": "Average CPU load has been over 90% for the 30 minutes",
+                                            "severity": 1,
                                             "enabled": true,
                                             "scopes": [
-                                                "[parameters('workspaceResourceId')]"
+                                                "[parameters('vmId')]"
                                             ],
-                                            "evaluationFrequency": "PT1M",
-                                            "windowSize": "PT5M",
+                                            "evaluationFrequency": "PT15M",
+                                            "windowSize": "PT30M",
                                             "criteria": {
                                                 "allOf": [
                                                     {
-                                                        "threshold": 3,
+                                                        "threshold": 90,
                                                         "name": "Metric1",
-                                                        "metricNamespace": "Microsoft.OperationalInsights/workspaces",
-                                                        "metricName": "[variables('metricName')]",
-                                                        "dimensions": [
-                                                            {
-                                                                "name": "Computer",
-                                                                "operator": "Include",
-                                                                "values": [
-                                                                    "[parameters('vmName')]"
-                                                                ]
-                                                            }
-                                                        ],
-                                                        "operator": "LessThanOrEqual",
-                                                        "timeAggregation": "Total",
+                                                        "metricNamespace": "Microsoft.Compute/virtualMachines",
+                                                        "metricName": "Percentage CPU",
+                                                        "operator": "GreaterThan",
+                                                        "timeAggregation": "Average",
+                                                        "skipMetricValidation": false,
                                                         "criterionType": "StaticThresholdCriterion"
                                                     }
                                                 ],
-                                                "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                                                "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
                                             },
                                             "autoMitigate": true,
-                                            "targetResourceType": "Microsoft.OperationalInsights/workspaces",
+                                            "targetResourceType": "Microsoft.Compute/virtualMachines",
                                             "targetResourceRegion": "westeurope",
                                             "actions": [
                                                 {

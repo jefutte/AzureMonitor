@@ -1,0 +1,150 @@
+{
+    "properties": {
+        "displayName": "Core Server Monitoring - Deploy Memory alert",
+        "policyType": "Custom",
+        "mode": "All",
+        "parameters": { 
+            "actionGroupId": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Action Group resource ID",
+                    "description": "Resource Id of the Action Group"
+                }
+            },
+            "tagName": {
+                "type": "String",
+                "metadata":{
+                    "displayName": "Tag name",
+                    "description": "Require this tag to deploy the alert"
+                },
+                "defaultValue": "EnableMonitoring"
+            },
+            "tagValue": {
+                "type": "String",
+                "metadata":{
+                    "displayName": "Tag value",
+                    "description": "Required tag value to deploy the alert"
+                },
+                "defaultValue": "true"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines/providers/microsoft.insights/metricDefinitions"
+                    },
+                    {
+                        "field": "name.value",
+                        "matchRegex": "\\LogicalDisk\\% Free Space"
+                    },
+                    {
+                        "field": "namespace",
+                        "equals": "Azure.VM.Windows.GuestMetrics"
+                    },
+                    {
+                        "field": "resourceType",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                        "field": "tags['tagName']",
+                        "equals": "tagValue"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "DeployIfNotExists",
+                "details": {
+                    "type": "microsoft.insights/metricAlerts",
+                    "resourceGroupName": "[resourceGroup().name]",
+                    "existenceCondition": {
+                        "field": "name",
+                        "equals": "[concat('Core ',field('Name'),' High Memory Usage')]"
+                    },
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+                        "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+                    ],
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "parameters": {
+                                "actionGroupId":{
+                                    "value": "[parameters('actionGroupId')]"
+                                },
+                                "vmName": {
+                                  "value": "[field('name')]"
+                                },
+                                "vmId": {
+                                    "value": "[field('id')]"
+                                }                                  
+                             },
+                            "template": {
+                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "actionGroupId":{
+                                        "type": "string"
+                                    },
+                                    "vmName": {
+                                        "type": "string" 
+                                    },
+                                    "vmId": {
+                                        "type": "string"
+                                    }
+                                },
+                                "variables": {
+                                    "subscriptionId": "[subscription().subscriptionId]",
+                                    "alertName": "[concat('Core ',parameters('vmName'),' High Memory Usage')]",
+                                    "metricName": "Average_% Processor Time"
+                                },
+                                "resources": [
+                                    {
+                                        "type": "microsoft.insights/metricAlerts",
+                                        "apiVersion": "2018-03-01",
+                                        "name": "[variables('alertName')]",
+                                        "location": "global",
+                                        "properties": {
+                                            "description": "Available memory has been less than 100 MB for the past 30 minutes",
+                                            "severity": 1,
+                                            "enabled": true,
+                                            "scopes": [
+                                                "[parameters('vmId')]"
+                                            ],
+                                            "evaluationFrequency": "PT15M",
+                                            "windowSize": "PT30M",
+                                            "criteria": {
+                                                "allOf": [
+                                                    {
+                                                        "threshold": 100000000,
+                                                        "name": "Metric1",
+                                                        "metricNamespace": "microsoft.compute/virtualmachines",
+                                                        "metricName": "Available Memory Bytes",
+                                                        "operator": "LessThan",
+                                                        "timeAggregation": "Average",
+                                                        "criterionType": "StaticThresholdCriterion"
+                                                    }
+                                                ],
+                                                "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+                                            },
+                                            "autoMitigate": true,
+                                            "targetResourceType": "Microsoft.Compute/virtualMachines",
+                                            "targetResourceRegion": "westeurope",
+                                            "actions": [
+                                                {
+                                                    "actionGroupId": "[parameters('actionGroupId')]",
+                                                    "webHookProperties": {}
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

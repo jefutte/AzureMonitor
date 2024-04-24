@@ -1,6 +1,6 @@
 {
     "properties": {
-        "displayName": "Core Server Monitoring - Deploy Heartbeat alert [Log based]",
+        "displayName": "Core Server Monitoring - Deploy Disk alert [Log based]",
         "policyType": "Custom",
         "mode": "All",
         "parameters": { 
@@ -81,7 +81,7 @@
                     "resourceGroupName": "[resourceGroup().name]",
                     "existenceCondition": {
                         "field": "name",
-                        "equals": "[concat('Core ',field('Name'),' Heartbeat')]"
+                        "equals": "[concat('Core ',field('Name'),' Disk Space warning')]"
                     },
                     "roleDefinitionIds": [
                         "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
@@ -123,34 +123,65 @@
                                 },
                                 "variables": {
                                     "subscriptionId": "[subscription().subscriptionId]",
-                                    "alertName": "[concat('Core ',parameters('vmName'),' Heartbeat')]",
-                                    "metricName": "Heartbeat"
+                                    "alertName": "[concat('Core ',parameters('vmName'),' Disk Space warning')]",
+                                    "alertDescription": "There is less than 10% free space. This is a warning, a critical alert will be triggered if the disk is below 5%",
+                                    "metricName": "FreeSpacePercentage"
                                 },
                                 "resources": [
                                     {
-                                        "type": "microsoft.insights/scheduledqueryrules",
-                                        "apiVersion": "2022-06-15",
+                                        "type": "Microsoft.Insights/scheduledQueryRules",
+                                        "apiVersion": "2018-04-16",
                                         "name": "[concat(variables('alertName'), '-sqr')]",
                                         "location": "westeurope",
-                                        "tags": {
-                                            "[concat('hidden-link:', parameters('workspaceResourceId'))]": "Resource"
-                                        },
-                                        "kind": "LogToMetric",
                                         "properties": {
+                                            "description": "[variables('alertDescription')]",
                                             "enabled": true,
-                                            "scopes": [
-                                                "[parameters('workspaceResourceId')]"
-                                            ],
-                                            "criteria": {
-                                                "allOf": [
-                                                    {
+                                            "source": {
+                                                "dataSourceId": "[parameters('workspaceResourceId')]"
+                                            },
+                                            "action": {
+                                                "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction",
+                                                "criteria": [{
                                                         "metricName": "[variables('metricName')]",
                                                         "dimensions": [
                                                             {
                                                                 "name": "Computer",
                                                                 "operator": "Include",
                                                                 "values": [
+                                                                    "[concat(parameters('vmName'), '.esvagt.net')]",
                                                                     "[parameters('vmName')]"
+                                                                ]
+                                                            },
+                                                            {
+                                                                "name": "InstanceName",
+                                                                "operator": "Include",
+                                                                "values": [
+                                                                    "A:",
+                                                                    "B:",
+                                                                    "C:",
+                                                                    "D:",
+                                                                    "E:",
+                                                                    "F:",
+                                                                    "G:",
+                                                                    "H:",
+                                                                    "I:",
+                                                                    "J:",
+                                                                    "K:",
+                                                                    "L:",
+                                                                    "M:",
+                                                                    "N:",
+                                                                    "O:",
+                                                                    "P:",
+                                                                    "Q:",
+                                                                    "R:",
+                                                                    "S:",
+                                                                    "T:",
+                                                                    "U:",
+                                                                    "V:",
+                                                                    "W:",
+                                                                    "X:",
+                                                                    "U:",
+                                                                    "Z:"
                                                                 ]
                                                             }
                                                         ]
@@ -160,48 +191,78 @@
                                         }
                                     },
                                     {
-                                        "type": "microsoft.insights/metricAlerts",
-                                        "apiVersion": "2018-03-01",
                                         "name": "[variables('alertName')]",
+                                        "type": "Microsoft.Insights/metricAlerts",
                                         "location": "global",
+                                        "apiVersion": "2018-03-01",
+                                        "tags": {},
+                                        "dependsOn":["[resourceId('Microsoft.Insights/scheduledQueryRules',concat(variables('alertName'), '-sqr'))]"],
                                         "properties": {
-                                            "severity": 0,
+                                            "description": "[variables('alertDescription')]",
+                                            "severity": 2,
                                             "enabled": true,
                                             "scopes": [
                                                 "[parameters('workspaceResourceId')]"
                                             ],
-                                            "evaluationFrequency": "PT1M",
+                                            "evaluationFrequency":"PT5M",
                                             "windowSize": "PT5M",
                                             "criteria": {
+                                                "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
                                                 "allOf": [
                                                     {
-                                                        "threshold": 3,
-                                                        "name": "Metric1",
-                                                        "metricNamespace": "Microsoft.OperationalInsights/workspaces",
+                                                        "name" : "1st criterion",
                                                         "metricName": "[variables('metricName')]",
-                                                        "dimensions": [
+                                                        "dimensions":[
                                                             {
                                                                 "name": "Computer",
                                                                 "operator": "Include",
                                                                 "values": [
+                                                                    "[concat(parameters('vmName'), '.esvagt.net')]",
                                                                     "[parameters('vmName')]"
+                                                                ]
+                                                            },
+                                                            {
+                                                                "name": "InstanceName",
+                                                                "operator": "Include",
+                                                                "values": [
+                                                                    "A:",
+                                                                    "B:",
+                                                                    "C:",
+                                                                    "D:",
+                                                                    "E:",
+                                                                    "F:",
+                                                                    "G:",
+                                                                    "H:",
+                                                                    "I:",
+                                                                    "J:",
+                                                                    "K:",
+                                                                    "L:",
+                                                                    "M:",
+                                                                    "N:",
+                                                                    "O:",
+                                                                    "P:",
+                                                                    "Q:",
+                                                                    "R:",
+                                                                    "S:",
+                                                                    "T:",
+                                                                    "U:",
+                                                                    "V:",
+                                                                    "W:",
+                                                                    "X:",
+                                                                    "U:",
+                                                                    "Z:"                                                                   
                                                                 ]
                                                             }
                                                         ],
-                                                        "operator": "LessThanOrEqual",
-                                                        "timeAggregation": "Total",
-                                                        "criterionType": "StaticThresholdCriterion"
+                                                        "operator": "Include",
+                                                        "threshold" : 10,
+                                                        "timeAggregation": 5
                                                     }
-                                                ],
-                                                "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                                                ]
                                             },
-                                            "autoMitigate": true,
-                                            "targetResourceType": "Microsoft.OperationalInsights/workspaces",
-                                            "targetResourceRegion": "westeurope",
                                             "actions": [
                                                 {
-                                                    "actionGroupId": "[parameters('actionGroupId')]",
-                                                    "webHookProperties": {}
+                                                    "actionGroupId": "[parameters('actionGroupId')]"
                                                 }
                                             ]
                                         }
