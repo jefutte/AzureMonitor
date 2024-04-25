@@ -1,0 +1,6 @@
+rgname = "rg-vmmonitor-pr-001"
+identityname = "id-vmmonitoring-pr-001"
+location = "westeurope"
+law_name = "law-monitoring-pr-001"
+law_sku = "PerGB2018"
+law_retention = "30"
