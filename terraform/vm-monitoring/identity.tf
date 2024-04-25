@@ -7,7 +7,7 @@ resource "azurerm_user_assigned_identity" "uami" {
 }
 
 resource "azurerm_role_assignment" "uamirole" {
-  scope = "/subscriptions/data.azurerm_client_config.core.subscription_id"
+  scope = "/subscriptions/${data.azurerm_client_config.core.subscription_id}"
   role_definition_name = var.identity_role
   principal_id = azurerm_user_assigned_identity.uami.principal_id
 }
