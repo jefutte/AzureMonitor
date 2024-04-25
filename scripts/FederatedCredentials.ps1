@@ -35,7 +35,7 @@ param (
 
     [Parameter()]
     [string]
-    $RoleDefinitionName = "Contributor",
+    $RoleDefinitionName = "Owner",
 
     [Parameter()]
     [string]
