@@ -57,7 +57,7 @@ $uami = New-AzUserAssignedIdentity -ResourceGroupName $rg.ResourceGroupName -Nam
 $roleassignment = New-AzRoleAssignment -PrincipalId $uami.PrincipalId -RoleDefinitionName $RoleDefinitionName -Scope "/subscriptions/$SubscriptionId/" -ObjectType 'ServicePrincipal'
 
 #Create federated credential for managed identity
-$fedcred = New-AzFederatedIdentityCredentials -ResourceGroupName $rg.ResourceGroupName -IdentityName $uami.Name -Issuer "https://token.actions.githubusercontent.com" -Name $GithubRepoName -Subject "repo:${GithubOrganizationName}/${GithubRepoName}"
+$fedcred = New-AzFederatedIdentityCredentials -ResourceGroupName $rg.ResourceGroupName -IdentityName $uami.Name -Issuer "https://token.actions.githubusercontent.com" -Name $GithubRepoName -Subject "repo:${GithubOrganizationName}/${GithubRepoName}:ref:refs/heads/main"
 
 [ordered]@{
     SUBSCRIPTION_ID = $SubscriptionId
