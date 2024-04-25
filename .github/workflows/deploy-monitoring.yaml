@@ -41,35 +41,40 @@ jobs:
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: ${{ secrets.CLIENT_ID }}
+        tenant-id: ${{ secrets.TENANT_ID }}
+        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
   
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
       id: fmt
       run: terraform fmt -check
       continue-on-error: true
+      working-directory: ./terraform/vm-monitoring
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       id: init
-      run: terraform init -backend-config=backend.conf
+      run: terraform init
+      working-directory: ./terraform/vm-monitoring
 
     # Verify configuration is syntactically valid and internally consistent, regardless of any provided variables or existing state.
     - name: Terraform Validate
       id: validate
       run: terraform validate
+      working-directory: ./terraform/vm-monitoring
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       id: plan
-      run: terraform plan -input=false -out=tfplan
+      run: terraform plan -input=false -out=tfplan -var-file="vars.tfvars"
+      working-directory: ./terraform/vm-monitoring
 
     # Output plan
     - name: Terraform Show
       id: show
       run: terraform show -json tfplan > tfplan.json
+      working-directory: ./terraform/vm-monitoring
 
     # PR comment
     - name: Terraform PR Comment
@@ -77,3 +82,8 @@ jobs:
       with:
         json-file: ./tfplan.json
         expand-comment: 'true' 
+      
+    # On push to "main", build or change infrastructure according to Terraform configuration files
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false -var-file="vars.tfvars"
+      working-directory: ./terraform/vm-monitoring
