@@ -4,7 +4,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
   location            = var.location
 
   description = ""
-  display_name = ""
+  display_name = "High CPU load"
   enabled = true
   
   identity {
