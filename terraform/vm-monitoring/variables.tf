@@ -25,3 +25,7 @@ variable "law_sku" {
 variable "law_retention" {
   type = string
 }
+
+variable "dcr_name" {
+  type = string
+}
