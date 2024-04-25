@@ -1,5 +1,3 @@
-data "azurerm_client_config" "core" {}
-
 resource "azurerm_user_assigned_identity" "uami" {
   name                = var.identity_name
   resource_group_name = azurerm_resource_group.monitorrg.name
