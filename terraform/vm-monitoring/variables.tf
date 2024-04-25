@@ -2,7 +2,11 @@ variable "rgname" {
   type = string
 }
 
-variable "identityname" {
+variable "identity_name" {
+  type = string
+}
+
+variable "identity_role" {
   type = string
 }
 

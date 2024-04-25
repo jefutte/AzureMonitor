@@ -1,5 +1,6 @@
 rgname = "rg-vmmonitor-pr-001"
-identityname = "id-vmmonitoring-pr-001"
+identity_name = "id-vmmonitoring-pr-001"
+identity_role = "Reader"
 location = "westeurope"
 law_name = "law-monitoring-pr-001"
 law_sku = "PerGB2018"
