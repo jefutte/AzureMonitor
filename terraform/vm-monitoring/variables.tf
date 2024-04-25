@@ -29,3 +29,7 @@ variable "law_retention" {
 variable "dcr_name" {
   type = string
 }
+
+variable "policy_assignment_name" {
+  type = string
+}
