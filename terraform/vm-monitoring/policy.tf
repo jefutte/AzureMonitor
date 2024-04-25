@@ -38,4 +38,8 @@ resource "azurerm_subscription_policy_assignment" "subpol" {
         }
     }
   )
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
