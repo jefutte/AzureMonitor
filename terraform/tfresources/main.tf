@@ -23,6 +23,6 @@ resource "azurerm_storage_container" "container" {
 
 resource "azurerm_role_assignment" "role" {
   scope                = azurerm_storage_account.stg.id
-  role_definition_name = "Owner"
+  role_definition_name = "Storage Blob Data Owner"
   principal_id         = data.azurerm_user_assigned_identity.identity.principal_id
 }
