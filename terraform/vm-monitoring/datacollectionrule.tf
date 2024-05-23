@@ -10,7 +10,8 @@ resource "azurerm_monitor_data_collection_rule" "vmidcr" {
       ]
       sampling_frequency_in_seconds = 60
       counter_specifiers = [
-        "\\VmInsights\\DetailedMetrics"
+        "\\VmInsights\\DetailedMetrics",
+        "\\Memory(*)\\% Used Memory"
       ]
       name = "VMInsightsPerfCounters"
     }
