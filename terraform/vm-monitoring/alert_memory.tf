@@ -1,10 +1,10 @@
-resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
-  name                = "alert-cpu"
+resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_memory" {
+  name                = "alert-memory"
   resource_group_name = azurerm_resource_group.monitorrg.name
   location            = var.location
 
   description = ""
-  display_name = "High CPU load"
+  display_name = "High memory usage"
   enabled = true
   
   identity {
@@ -24,10 +24,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
     query = <<-QUERY
     arg("").resources
         | where type =~ 'microsoft.compute/virtualMachines'
-        | where tags contains "AlertThreshold-CPU"
+        | where tags contains "AlertThreshold-RAM"
         | mv-expand bagexpansion=array tags limit 400
         | extend tagName = tags[0], tagValue = tags[1]
-        | where tagName == "AlertThreshold-CPU"
+        | where tagName == "AlertThreshold-RAM"
         | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue
         | join ( 
             InsightsMetrics
