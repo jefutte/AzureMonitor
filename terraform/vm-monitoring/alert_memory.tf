@@ -3,15 +3,15 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_memory" {
   resource_group_name = azurerm_resource_group.monitorrg.name
   location            = var.location
 
-  description = ""
+  description  = ""
   display_name = "High memory usage"
-  enabled = true
-  
+  enabled      = true
+
   identity {
     type = "UserAssigned"
-    identity_ids = [ 
-        azurerm_user_assigned_identity.uami.id
-     ]
+    identity_ids = [
+      azurerm_user_assigned_identity.uami.id
+    ]
   }
 
   evaluation_frequency = "PT5M"
@@ -21,7 +21,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_memory" {
   ]
   severity = 2
   criteria {
-    query = <<-QUERY
+    query                   = <<-QUERY
     arg("").resources
         | where type =~ 'microsoft.compute/virtualMachines'
         | where tags contains "AlertThreshold-RAM"
@@ -40,17 +40,17 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_memory" {
         | project ['% Processor'], ResourceId, name, resourceGroup, tagValue
     QUERY
     time_aggregation_method = "Count"
-    threshold = 0
-    operator = "GreaterThan"
+    threshold               = 0
+    operator                = "GreaterThan"
 
     resource_id_column = "ResourceId"
     failing_periods {
-      number_of_evaluation_periods = 1
+      number_of_evaluation_periods             = 1
       minimum_failing_periods_to_trigger_alert = 1
     }
   }
 
-  auto_mitigation_enabled = true
+  auto_mitigation_enabled          = true
   workspace_alerts_storage_enabled = false
 
 }

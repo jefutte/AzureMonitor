@@ -1,19 +1,18 @@
-resource "azurerm_monitor_data_collection_rule" "vmidcr" {
-  name                = var.dcr_name
+resource "azurerm_monitor_data_collection_rule" "customdcr" {
+  name                = var.custom_dcr_name
   resource_group_name = azurerm_resource_group.monitorrg.name
   location            = var.location
 
   data_sources {
     performance_counter {
       streams = [
-        "Microsoft-InsightsMetrics"
+        "Microsoft-Perf"
       ]
       sampling_frequency_in_seconds = 60
       counter_specifiers = [
-        "\\VmInsights\\DetailedMetrics",
         "\\Memory(*)\\% Used Memory"
       ]
-      name = "VMInsightsPerfCounters"
+      name = "Perf"
     }
   }
 
@@ -26,7 +25,7 @@ resource "azurerm_monitor_data_collection_rule" "vmidcr" {
 
   data_flow {
     streams = [
-      "Microsoft-InsightsMetrics"
+      "Microsoft-Perf"
     ]
     destinations = [
       "VMInsightsPerf-Logs-Dest"
