@@ -23,21 +23,23 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_memory" {
   criteria {
     query                   = <<-QUERY
     arg("").resources
-        | where type =~ 'microsoft.compute/virtualMachines'
-        | where tags contains "AlertThreshold-RAM"
-        | mv-expand bagexpansion=array tags limit 400
-        | extend tagName = tags[0], tagValue = tags[1]
-        | where tagName == "AlertThreshold-RAM"
-        | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue
-        | join ( 
-            InsightsMetrics
-                | where Name == "UtilizationPercentage"
-                | where TimeGenerated > ago(15m)
-                | summarize ['% Processor']=avg(Val) by ResourceId = tolower(_ResourceId)
-                )
-            on ResourceId
-        | where ['% Processor'] > tagValue
-        | project ['% Processor'], ResourceId, name, resourceGroup, tagValue
+    | where type =~ 'microsoft.compute/virtualMachines'
+    | where tags contains "AlertThreshold-RAM"
+    | mv-expand bagexpansion=array tags limit 400
+    | extend tagName = tags[0], tagValue = tags[1]
+    | where tagName == "AlertThreshold-RAM"
+    | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue
+    | join ( 
+        InsightsMetrics
+            | where Namespace == "Memory" and Name == "AvailableMB"
+            | extend memorySizeMB = todouble(parse_json(Tags).["vm.azm.ms/memorySizeMB"]) 
+            | extend PercentageBytesinUse = Val/memorySizeMB*100
+            | where TimeGenerated > ago(15m)
+            | summarize ['% Used Memory']=avg(PercentageBytesinUse) by ResourceId = tolower(_ResourceId)
+            )
+        on ResourceId
+    | where ['% Used Memory'] > tagValue
+    | project ['% Used Memory'], ResourceId, name, resourceGroup, tagValue
     QUERY
     time_aggregation_method = "Count"
     threshold               = 0
