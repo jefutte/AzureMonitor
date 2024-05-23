@@ -26,7 +26,11 @@ variable "law_retention" {
   type = string
 }
 
-variable "dcr_name" {
+variable "vmi_dcr_name" {
+  type = string
+}
+
+variable "custom_dcr_name" {
   type = string
 }
 
