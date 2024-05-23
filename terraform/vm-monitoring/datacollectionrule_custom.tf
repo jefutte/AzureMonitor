@@ -10,7 +10,8 @@ resource "azurerm_monitor_data_collection_rule" "customdcr" {
       ]
       sampling_frequency_in_seconds = 60
       counter_specifiers = [
-        "\\Memory(*)\\% Used Memory"
+        "Memory\\Available MBytes",
+        "Processor(_Total)\\% Processor Time"
       ]
       name = "Perf"
     }
