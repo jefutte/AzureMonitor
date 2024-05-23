@@ -36,3 +36,4 @@ resource "azurerm_monitor_data_collection_rule" "vmidcr" {
     azurerm_log_analytics_workspace.law
   ]
 }
+ 

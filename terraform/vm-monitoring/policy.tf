@@ -5,7 +5,7 @@ locals {
   userAssignedManagedIdentityResourceGroup = azurerm_resource_group.monitorrg.name
   effect                                   = "DeployIfNotExists"
   scopeToSupportedImages                   = true
-  dcrResourceId                            = azurerm_monitor_data_collection_rule.vmidcr.id
+  dcrResourceId                            = azurerm_monitor_data_collection_rule.customdcr.id
 }
 
 resource "azurerm_subscription_policy_assignment" "subpol" {
