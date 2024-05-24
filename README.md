@@ -35,7 +35,7 @@ Everything is built in Terraform right now, but I'm planning on doing bicep too.
 Contributions are welcome.
 
 ## What is this project *not*?
-The truth to monitoring servers. It's one way of doing it, and there is definetely other ways to do it. Evaluate what your needs are, and deploy the correct solution. 
+The truth to monitoring servers. It's one way of doing it, and there is definitely other ways to do it. Evaluate what your needs are, and deploy the correct solution. 
 It is not a scalable solution that works across Azure Landing Zones - *yet*, might look into that at some point.
 
 Other Azure Monitor projects worth looking at:
