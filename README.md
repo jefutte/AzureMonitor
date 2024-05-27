@@ -1,9 +1,9 @@
-# Azure Monitor with overrides
+# Azure Monitor
 This repo is work in progress and code will change - I promise no upgrade paths.
 
 ## What is this project?
 This project started as a way for me to experiment with different Azure Monitor solutions for servers, either Arc based og Azure VMs. 
-It's come to be my take on a solution that I think has been missing from Azure Monitor since forever: the ability to configure a centralized alert, but with decentralized management. Think of it as overrides in SCOM. 
+It's come to be my take on a solution that I think has been missing from Azure Monitor since forever: the ability to configure a centralized alert, but with decentralized thresholds. Think of it as overrides in SCOM. 
 
 *Wait.. Overrides, how?*
 
@@ -39,7 +39,9 @@ The truth to monitoring servers. It's one way of doing it, and there is definite
 It is not a scalable solution that works across Azure Landing Zones - *yet*, might look into that at some point.
 
 Other Azure Monitor projects worth looking at:
+
 [Azure Monitor Packs](https://github.com/Azure/AzureMonitorStarterPacks)
+
 [Azure Monitor Baseline Alerts](https://github.com/Azure/azure-monitor-baseline-alerts)
 
 ## To do list
@@ -52,9 +54,9 @@ Server monitoring:
   - [x] RAM - **Done**
   - [ ] Disk 
   - [ ] Dashboard
-- [ ] Service monitoring
-- [ ] Process monitoring
-- [ ] Network monitoring
+- [ ] Service monitoring *maybe*
+- [ ] Process monitoring *maybe*
+- [ ] Network monitoring *maybe*
 
 # Deployment
 You can either do a Github Actions deployment, or just deploy from your own computer, it's up to you.
