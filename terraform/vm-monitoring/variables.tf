@@ -46,7 +46,7 @@ variable "action_group_short_name" {
   type = string
 }
 
-variable "jira_webhooks" {
+variable "webhooks" {
   type = object({
     name        = optional(string, null)
     service_uri = optional(string, null)
