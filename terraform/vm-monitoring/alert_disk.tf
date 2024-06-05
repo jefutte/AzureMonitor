@@ -58,7 +58,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_disk_warning" {
   workspace_alerts_storage_enabled = false
 
   action {
-    action_groups = [ 
+    action_groups = [
       azurerm_monitor_action_group.actions.id
     ]
   }
@@ -126,7 +126,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_disk_critical" 
   workspace_alerts_storage_enabled = false
 
   action {
-    action_groups = [ 
+    action_groups = [
       azurerm_monitor_action_group.actions.id
     ]
   }

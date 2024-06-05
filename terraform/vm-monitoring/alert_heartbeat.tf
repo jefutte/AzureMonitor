@@ -52,7 +52,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_heartbeat" {
   workspace_alerts_storage_enabled = false
 
   action {
-    action_groups = [ 
+    action_groups = [
       azurerm_monitor_action_group.actions.id
     ]
   }
