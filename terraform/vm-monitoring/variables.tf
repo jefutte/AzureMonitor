@@ -50,8 +50,9 @@ variable "jira_webhooks" {
   type = object({
     name        = optional(string, null)
     service_uri = optional(string, null)
-    sensitive   = optional(bool, true)
+    use_common_alert_schema = optional(bool, true)
   })
   description = "Define Jira webhooks for sending alerts to"
   default     = null
+  sensitive = true
 }
