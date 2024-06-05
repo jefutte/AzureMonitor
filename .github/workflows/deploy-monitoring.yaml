@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TF_VAR_jira_webhooks: ${{ secrets.JIRA_WEBHOOK }}
+      TF_VAR_action_group_webhook: ${{ secrets.JIRA_WEBHOOK }}
 
     defaults:
       run:
