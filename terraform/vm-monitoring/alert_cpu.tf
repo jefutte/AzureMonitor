@@ -43,6 +43,24 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
     threshold               = 0
     operator                = "GreaterThan"
 
+    dimension {
+      name = "% Processor"
+      operator = "Include"
+      values = ["*"]
+    }
+
+    dimension {
+      name = "name"
+      operator = "Include"
+      values = [ "*" ]
+    }
+
+    dimension {
+      name = "resourceGroup"
+      operator = "Include"
+      values = [ "*" ]
+    }
+
     resource_id_column = "ResourceId"
     failing_periods {
       number_of_evaluation_periods             = 1
