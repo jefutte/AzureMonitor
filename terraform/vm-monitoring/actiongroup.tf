@@ -7,9 +7,9 @@ resource "azurerm_monitor_action_group" "actions" {
     for_each = var.jira_webhooks
 
     content {
-      name                    = var.jira_webhook.name
-      service_uri             = var.jira_webhook.service_uri
-      use_common_alert_schema = var.jira_webhook.use_common_alert_schema
+      name                    = var.jira_webhooks.name
+      service_uri             = var.jira_webhooks.service_uri
+      use_common_alert_schema = var.jira_webhooks.use_common_alert_schema
     }
   }
 }
