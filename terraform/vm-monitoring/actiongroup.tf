@@ -4,8 +4,8 @@ resource "azurerm_monitor_action_group" "actions" {
   short_name          = var.action_group_short_name
 
   webhook_receiver {
-    name = "jira"
-    service_uri = var.action_group_webhook
+    name                    = "jira"
+    service_uri             = var.action_group_webhook
     use_common_alert_schema = true
   }
 }

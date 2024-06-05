@@ -44,21 +44,21 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
     operator                = "GreaterThan"
 
     dimension {
-      name = "% Processor"
+      name     = "% Processor"
       operator = "Include"
-      values = [ "*" ]
+      values   = ["*"]
     }
 
     dimension {
-      name = "name"
+      name     = "name"
       operator = "Include"
-      values = [ "*" ]
+      values   = ["*"]
     }
 
     dimension {
-      name = "resourceGroup"
+      name     = "resourceGroup"
       operator = "Include"
-      values = [ "*" ]
+      values   = ["*"]
     }
 
     resource_id_column = "ResourceId"
@@ -72,7 +72,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
   workspace_alerts_storage_enabled = false
 
   action {
-    action_groups = [ 
+    action_groups = [
       azurerm_monitor_action_group.actions.id
     ]
   }

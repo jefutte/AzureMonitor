@@ -38,6 +38,10 @@ variable "policy_assignment_name" {
   type = string
 }
 
+variable "policy_assignment_name_hybrid" {
+  type = string
+}
+
 variable "action_group_name" {
   type = string
 }
@@ -47,6 +51,6 @@ variable "action_group_short_name" {
 }
 
 variable "action_group_webhook" {
-  type = string
+  type      = string
   sensitive = true
 }

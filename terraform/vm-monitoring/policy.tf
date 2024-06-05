@@ -44,3 +44,30 @@ resource "azurerm_subscription_policy_assignment" "subpol" {
     }
   )
 }
+
+
+
+resource "azurerm_subscription_policy_assignment" "subpol_hybrid" {
+  name                 = var.policy_assignment_name_hybrid
+  subscription_id      = "/subscriptions/${data.azurerm_client_config.core.subscription_id}"
+  policy_definition_id = "/providers/Microsoft.Authorization/policySetDefinitions/2b00397d-c309-49c4-aa5a-f0b2c5bc6321"
+  location             = var.location
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  parameters = jsonencode(
+    {
+      "enableProcessesAndDependencies" = {
+        value = local.enableProcessesAndDependencies
+      }
+      "effect" : {
+        value = local.effect
+      }
+      "dcrResourceId" : {
+        value = local.dcrResourceId
+      }
+    }
+  )
+}
