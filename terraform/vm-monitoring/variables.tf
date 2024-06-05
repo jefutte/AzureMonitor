@@ -48,10 +48,10 @@ variable "action_group_short_name" {
 
 variable "jira_webhooks" {
   type = object({
-    name = optional(string, null)
+    name        = optional(string, null)
     service_uri = optional(string, null)
-    sensitive = optional(bool, true)
+    sensitive   = optional(bool, true)
   })
   description = "Define Jira webhooks for sending alerts to"
-  default = null
+  default     = null
 }
