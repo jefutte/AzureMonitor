@@ -101,7 +101,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_disk_critical" 
           | where Name == "FreeSpacePercentage"
           | where TimeGenerated > ago(15m)
           | extend mountId = trim_end(":",tostring(parse_json(Tags)['vm.azm.ms/mountId']))
-          | summarize ['% FreeSpace']=avg(Val) by ResourceId = tolower(_ResourceId), mountId
+          | summarize ['% FreeSpace']=round(avg(Val),2) by ResourceId = tolower(_ResourceId), mountId
       ) on ResourceId, mountId
       | where ['% FreeSpace'] < thresholdValue
       | project ['% FreeSpace'], ResourceId, name, resourceGroup, mountId, thresholdValue

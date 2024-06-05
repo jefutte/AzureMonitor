@@ -13,10 +13,10 @@ Through tags of course! With the magic of Azure Resource Graph and the ability t
   arg("").resources
       | where type =~ 'microsoft.compute/virtualMachines'
       | where tags contains "AlertThreshold-CPU"
-      | mv-expand bagexpansion=array tags limit 400
-      | extend tagName = tags[0], tagValue = tags[1]
-      | where tagName == "AlertThreshold-CPU"
-      | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue
+      | mv-expand bagexpansion=array tags limit 400 
+      | extend tagName = tags[0], tagValue = tags[1] 
+      | where tagName == "AlertThreshold-CPU" 
+      | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue 
       | join ( 
           InsightsMetrics
               | where Name == "UtilizationPercentage"
@@ -52,7 +52,7 @@ Server monitoring:
   - [x] Heartbeat - **Done**
   - [x] CPU - **Done**
   - [x] RAM - **Done**
-  - [ ] Disk 
+  - [x] Disk 
   - [ ] Dashboard
 - [ ] Expand to Arc
 - [ ] Add Linux
