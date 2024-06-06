@@ -23,7 +23,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_disk_warning" {
   criteria {
     query                   = <<-QUERY
       arg("").resources
-      | where type =~ 'microsoft.compute/virtualMachines'
+      | where type =~ 'microsoft.compute/virtualMachines' or type =~ "Microsoft.HybridCompute/machines"
       | where tags contains "AlertThreshold-FreeSpace"
       | mv-expand bagexpansion=array tags limit 400
       | extend tagName = tags[0], tagValue = tags[1]
