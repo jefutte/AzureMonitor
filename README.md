@@ -54,7 +54,7 @@ Server monitoring:
   - [x] RAM - **Done**
   - [x] Disk 
   - [ ] Dashboard
-- [ ] Expand to Arc
+- [x] Expand to Arc
 - [ ] Add Linux
 - [ ] Service monitoring *maybe*
 - [ ] Process monitoring *maybe*
