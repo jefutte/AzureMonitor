@@ -52,9 +52,9 @@ Server monitoring:
   - [x] Heartbeat - **Done**
   - [x] CPU - **Done**
   - [x] RAM - **Done**
-  - [x] Disk 
+  - [x] Disk - **Done**
   - [ ] Dashboard
-- [ ] Expand to Arc
+- [x] Expand to Arc
 - [ ] Add Linux
 - [ ] Service monitoring *maybe*
 - [ ] Process monitoring *maybe*
