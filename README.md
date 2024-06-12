@@ -64,9 +64,24 @@ Server monitoring:
 You can either do a Github Actions deployment, or just deploy from your own computer, it's up to you.
 
 ## Pre-requisites
-You'll need an Azure subscription, 2 or more if you want to tinker with alerts for VMs in different subscriptions.
+You'll need an Azure subscription and owner permissions to it, 2 or more subscriptions if you want to tinker with alerts for VMs in different subscriptions.
+You'll also need az cli and terraform installed.
 
 ## Github Action
 If you want to setup Github Actions for deployment, go through these steps to do configure everything you need
 
-# Manually
+# Manually - Terraform
+1. Remove terraform\vm-monitoring\backend.tf file
+2. *Optional* Update vars.tfvars with your desired information
+3. Fire up a terminal and run ``az login`` and login to your account, and select the subscription you want to deploy to using ``az account set --subscription "My Demos"``
+4. Change directory to \terraform\vm-monitoring
+5. Run ``terraform init`` 
+6. Run ``terraform plan -var-file="vars.tfvars"``
+7. Run ``terraform apply -var-file="vars.tfvars"``
+8. If you do not have a VM to test with, create one
+9. Tag your VM with on of the following tags:
+   - For a CPU alert at 90% usage: ``AlertThreshold-CPU:90``
+   - For a Memory alert at 90% usage: ``AlertThreshold-RAM:90``
+   - For a Disk alert at 90% for C: and 10% at D:, use: ``AlertThreshold-FreeSpace:C:90;D:10``
+   - For a Heartbeat alert after 5 minutes without heartbeats: ``AlertThreshold-Heartbeat:0.00:05:00``   OR   ``AlertThreshold-Heartbeat : 5M``
+10. Make sure your VM actually are above those thresholds, and wait for alerts..

@@ -26,7 +26,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
         | where type =~ 'microsoft.compute/virtualMachines'
         | where tags contains "AlertThreshold-CPU"
         | mv-expand bagexpansion=array tags limit 400
-        | extend tagName = tags[0], tagValue = tags[1]
+        | extend tagName = tags[0], tagValue = tags[1] 
         | where tagName == "AlertThreshold-CPU"
         | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue
         | join ( 
@@ -70,11 +70,5 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
 
   auto_mitigation_enabled          = true
   workspace_alerts_storage_enabled = false
-
-  action {
-    action_groups = [
-      azurerm_monitor_action_group.actions.id
-    ]
-  }
 
 }

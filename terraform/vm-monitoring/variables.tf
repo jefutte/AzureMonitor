@@ -53,4 +53,5 @@ variable "action_group_short_name" {
 variable "action_group_webhook" {
   type      = string
   sensitive = true
+  default = ""
 }
