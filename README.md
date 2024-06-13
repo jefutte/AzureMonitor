@@ -70,7 +70,9 @@ You'll also need az cli and terraform installed.
 ## Github Action
 If you want to setup Github Actions for deployment, go through these steps to do configure everything you need
 
-# Manually - Terraform
+*Coming*
+
+## Manually - Terraform
 1. Remove terraform\vm-monitoring\backend.tf file
 2. *Optional* Update vars.tfvars with your desired information
 3. Fire up a terminal and run ``az login`` and login to your account, and select the subscription you want to deploy to using ``az account set --subscription "My Demos"``
