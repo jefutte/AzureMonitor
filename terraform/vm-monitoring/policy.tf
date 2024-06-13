@@ -57,7 +57,7 @@ resource "azurerm_subscription_policy_assignment" "subpol" {
   )
 }
 
-resource "azurerm_role_assignment" "name" {
+resource "azurerm_role_assignment" "role_az" {
   for_each = local.azRoles
 
   role_definition_name = each.key
@@ -91,7 +91,7 @@ resource "azurerm_subscription_policy_assignment" "subpol_hybrid" {
   )
 }
 
-resource "azurerm_role_assignment" "name" {
+resource "azurerm_role_assignment" "role_hybrid" {
   for_each = local.hybridRoles
 
   role_definition_name = each.key
