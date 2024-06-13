@@ -6,6 +6,18 @@ locals {
   effect                                   = "DeployIfNotExists"
   scopeToSupportedImages                   = true
   dcrResourceId                            = azurerm_monitor_data_collection_rule.vmidcr.id
+  azRoles = toset([
+    "Contributor",
+    "User Access Administrator",
+    "Virtual Machine Contributor",
+    "Log Analytics Contributor",
+    "Monitoring Contributor"
+  ])
+  hybridRoles = toset([
+    "Azure Connected Machine Resource Administrator", 
+    "Log Analytics Contributor", 
+    "Monitoring Contributor"
+  ])
 }
 
 resource "azurerm_subscription_policy_assignment" "subpol" {
@@ -45,6 +57,13 @@ resource "azurerm_subscription_policy_assignment" "subpol" {
   )
 }
 
+resource "azurerm_role_assignment" "name" {
+  for_each = local.azRoles
+
+  role_definition_name = each.key
+  scope = data.azurerm_client_config.core.subscription_id
+  principal_id = azurerm_subscription_policy_assignment.subpol.identity[0].principal_id
+}
 
 
 resource "azurerm_subscription_policy_assignment" "subpol_hybrid" {
@@ -70,4 +89,12 @@ resource "azurerm_subscription_policy_assignment" "subpol_hybrid" {
       }
     }
   )
+}
+
+resource "azurerm_role_assignment" "name" {
+  for_each = local.hybridRoles
+
+  role_definition_name = each.key
+  scope = data.azurerm_client_config.core.subscription_id
+  principal_id = azurerm_subscription_policy_assignment.subpol_hybrid.identity[0].principal_id
 }

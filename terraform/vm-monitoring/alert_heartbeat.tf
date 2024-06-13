@@ -17,7 +17,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_heartbeat" {
   evaluation_frequency = "PT5M"
   window_duration      = "PT5M"
   scopes = [
-    "/subscriptions/${data.azurerm_client_config.core.subscription_id}"
+    azurerm_log_analytics_workspace.law.id
   ]
   severity = 2
   criteria {
