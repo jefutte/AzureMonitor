@@ -30,6 +30,10 @@ variable "vmi_dcr_name" {
   type = string
 }
 
+variable "ct_dcr_name" {
+  type = string
+}
+
 variable "custom_dcr_name" {
   type = string
 }
@@ -53,5 +57,5 @@ variable "action_group_short_name" {
 variable "action_group_webhook" {
   type      = string
   sensitive = true
-  default = ""
+  default   = ""
 }
