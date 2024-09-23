@@ -19,8 +19,8 @@ resource "azurerm_monitor_data_collection_rule" "dcr_ct" {
             "enableFiles": false,
             "enableSoftware": false,
             "enableRegistry": false,
-            "enableServices": true
-            "enableInventory": false
+            "enableServices": true,
+            "enableInventory": false,
             "registrySettings": {},
             "fileSettings": {},
             "softwareSettings": {},
@@ -49,7 +49,7 @@ resource "azurerm_monitor_data_collection_rule" "dcr_ct" {
             "enableRegistry": false,
             "enableServices": false,
             "enableInventory": false,
-            "fileSettings": {}
+            "fileSettings": {},
             "softwareSettings": {},
             "registrySettings": {},
             "serviceSettings": {},
