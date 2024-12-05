@@ -4,7 +4,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_services" {
   location            = var.location
 
   description  = ""
-  display_name = "High CPU load"
+  display_name = "Windows service stopped"
   enabled      = true
 
   identity {
