@@ -1,5 +1,5 @@
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_services" {
-  name                = "alert-cpu"
+  name                = "alert-services"
   resource_group_name = azurerm_resource_group.monitorrg.name
   location            = var.location
 
