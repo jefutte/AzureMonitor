@@ -33,7 +33,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_services" {
     | mv-expand servicesArray limit 400
     | join (
         ConfigurationChange
-        | where SvcName == "Spooler"
+        //| where SvcName == "Spooler"
         | project ResourceId = tolower(_ResourceId), Computer, TimeGenerated, SvcPreviousState, SvcState, SvcDisplayName, SvcStartupType
     ) on ResourceId
     QUERY
@@ -42,19 +42,13 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_services" {
     operator                = "GreaterThan"
 
     dimension {
-      name     = "% Processor"
+      name     = "SvcState"
       operator = "Include"
       values   = ["*"]
     }
 
     dimension {
-      name     = "name"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "resourceGroup"
+      name     = "SvcDisplayName"
       operator = "Include"
       values   = ["*"]
     }
