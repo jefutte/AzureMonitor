@@ -24,10 +24,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_disk_warning" {
     query                   = <<-QUERY
       arg("").resources
       | where type =~ 'microsoft.compute/virtualMachines' or type =~ "Microsoft.HybridCompute/machines"
-      | where tags contains "AlertThreshold-FreeSpace"
+      | where tags contains "${var.disk_warning_threshold_tag_name}"
       | mv-expand bagexpansion=array tags limit 400
       | extend tagName = tags[0], tagValue = tags[1]
-      | where tagName == "AlertThreshold-FreeSpace"
+      | where tagName == "${var.disk_warning_threshold_tag_name}"
       | project ResourceId=tolower(id), name, resourceGroup, tagValue
       | extend thresholdArray = split(tagValue, ";")
       | mv-expand thresholdArray limit 400
@@ -92,10 +92,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_disk_critical" 
     query                   = <<-QUERY
       arg("").resources
       | where type =~ 'microsoft.compute/virtualMachines' or type =~ "Microsoft.HybridCompute/machines"
-      | where tags contains "AlertThreshold-DiskCritical"
+      | where tags contains "${var.disk_critical_threshold_tag_name}"
       | mv-expand bagexpansion=array tags limit 400
       | extend tagName = tags[0], tagValue = tags[1]
-      | where tagName == "AlertThreshold-DiskCritical"
+      | where tagName == "${var.disk_critical_threshold_tag_name}"
       | project ResourceId=tolower(id), name, resourceGroup, tagValue
       | extend thresholdArray = split(tagValue, ";")
       | mv-expand thresholdArray limit 400

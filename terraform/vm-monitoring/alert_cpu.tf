@@ -24,10 +24,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_cpu" {
     query                   = <<-QUERY
     arg("").resources
         | where type =~ 'microsoft.compute/virtualMachines' or type =~ "Microsoft.HybridCompute/machines"
-        | where tags contains "AlertThreshold-CPU"
+      | where tags contains "${var.cpu_threshold_tag_name}"
         | mv-expand bagexpansion=array tags limit 400
         | extend tagName = tags[0], tagValue = tags[1] 
-        | where tagName == "AlertThreshold-CPU"
+      | where tagName == "${var.cpu_threshold_tag_name}"
         | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue
         | join ( 
             InsightsMetrics

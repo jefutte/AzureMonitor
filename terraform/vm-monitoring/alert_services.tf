@@ -24,10 +24,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_services" {
     query                   = <<-QUERY
     arg("").resources
     | where type =~ 'microsoft.compute/virtualMachines' or type =~ "Microsoft.HybridCompute/machines"
-    | where tags contains "Alert-Services"
+    | where tags contains "${var.services_alert_tag_name}"
     | mv-expand bagexpansion=array tags limit 400
     | extend tagName = tags[0], tagValue = tags[1]
-    | where tagName == "Alert-Services"
+    | where tagName == "${var.services_alert_tag_name}"
     | project ResourceId=tolower(id), name, resourceGroup, tagValue
     | extend servicesArray = split(tagValue, ";")
     | mv-expand servicesArray limit 400

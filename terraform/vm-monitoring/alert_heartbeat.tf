@@ -24,10 +24,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_heartbeat" {
     query                   = <<-QUERY
     arg("").resources
         | where type =~ 'microsoft.compute/virtualMachines' or type =~ "Microsoft.HybridCompute/machines"
-        | where tags contains "AlertThreshold-Heartbeat"
+        | where tags contains "${var.heartbeat_threshold_tag_name}"
         | mv-expand bagexpansion=array tags limit 400
       | extend tagName = tags[0], tagValue = trim(' ', tostring(tags[1]))
-        | where tagName == "AlertThreshold-Heartbeat"
+        | where tagName == "${var.heartbeat_threshold_tag_name}"
       | extend shortMatch = extract(@"^([0-9]+)\s*([smhdSMHD])$", 0, tagValue)
       | extend shortValue = toint(extract(@"^([0-9]+)", 1, tagValue))
       | extend shortUnit  = tolower(extract(@"^[0-9]+\s*([smhd])$", 1, tolower(tagValue)))
