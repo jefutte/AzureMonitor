@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(head -100)",
+      "Bash(Get-ChildItem -Path \"c:\\\\GitHub\\\\Azure-Monitor-VMs\\\\terraform\\\\\" -Recurse -Filter \"*.tf\" | Select-Object -ExpandProperty FullName | Sort-Object)"
+    ]
+  }
+}

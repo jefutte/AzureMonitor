@@ -35,3 +35,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore environment-specific backend configuration files (keep example tracked)
+terraform/vm-monitoring/backend/*.backend.hcl
+!terraform/vm-monitoring/backend/backend.example.hcl

@@ -26,16 +26,29 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert_heartbeat" {
         | where type =~ 'microsoft.compute/virtualMachines' or type =~ "Microsoft.HybridCompute/machines"
         | where tags contains "AlertThreshold-Heartbeat"
         | mv-expand bagexpansion=array tags limit 400
-        | extend tagName = tags[0], tagValue = tags[1]
+      | extend tagName = tags[0], tagValue = trim(' ', tostring(tags[1]))
         | where tagName == "AlertThreshold-Heartbeat"
-        | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue
+      | extend shortMatch = extract(@"^([0-9]+)\s*([smhdSMHD])$", 0, tagValue)
+      | extend shortValue = toint(extract(@"^([0-9]+)", 1, tagValue))
+      | extend shortUnit  = tolower(extract(@"^[0-9]+\s*([smhd])$", 1, tolower(tagValue)))
+      | extend normalizedTagValue = case(
+        tagValue contains ":" or tagValue contains ".", tagValue,
+        isnotempty(shortMatch) and shortUnit == "s", strcat("0.00:00:", format_timespan(totimespan(strcat(shortValue, "s")), "ss")),
+        isnotempty(shortMatch) and shortUnit == "m", strcat("0.00:", format_timespan(totimespan(strcat(shortValue, "m")), "mm:ss")),
+        isnotempty(shortMatch) and shortUnit == "h", strcat("0.", format_timespan(totimespan(strcat(shortValue, "h")), "hh:mm:ss")),
+        isnotempty(shortMatch) and shortUnit == "d", strcat(tostring(shortValue), ".00:00:00"),
+        ""
+        )
+      | extend thresholdTs = totimespan(normalizedTagValue)
+      | where isnotnull(thresholdTs) and thresholdTs > 0s
+      | project ResourceId=tolower(id), name, resourceGroup, tagName, tagValue, thresholdTs
         | join ( 
             Heartbeat
                 | summarize arg_max(TimeGenerated, *) by ResourceId = tolower(_ResourceId)
                 )
             on ResourceId
-        | where TimeGenerated < ago(totimespan(tagValue))
-        | project TimeGenerated, ResourceId, name, resourceGroup, tagValue
+      | where TimeGenerated < ago(thresholdTs)
+      | project TimeGenerated, ResourceId, name, resourceGroup, tagValue, thresholdTs
     QUERY
     time_aggregation_method = "Count"
     threshold               = 0

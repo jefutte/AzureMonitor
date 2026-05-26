@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git pull *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\GitHub\\\\Azure-Monitor-VMs\" -Recurse -Force)",
+      "Bash(Select-Object FullName)"
+    ]
+  }
+}

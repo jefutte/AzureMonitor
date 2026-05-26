@@ -1,4 +1,7 @@
 locals {
+  # Note: For built-in initiative 924bfe3a-762f-40e7-86dd-5c8b95eb09e6 (Enable Azure Monitor for VMs with AMA),
+  # Contributor and User Access Administrator are required on the policy assignment managed identity
+  # for remediation/deployment flows. Reference: https://www.azadvertizer.net/azpolicyinitiativesadvertizer/924bfe3a-762f-40e7-86dd-5c8b95eb09e6.html
   enableProcessesAndDependencies           = false
   bringYourOwnUserAssignedManagedIdentity  = true
   userAssignedManagedIdentityName          = azurerm_user_assigned_identity.uami.name

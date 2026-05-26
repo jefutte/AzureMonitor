@@ -72,18 +72,30 @@ If you want to setup Github Actions for deployment, go through these steps to do
 
 *Coming*
 
+## Terraform version policy
+- Supported Terraform CLI version: `>= 1.7.0, < 2.0.0`
+- `azurerm` provider version stream: `~> 3.100`
+- Upgrade approach: periodically validate in a non-production environment before updating provider minor stream.
+- Variable validation is enabled for core settings such as Log Analytics SKU/retention and action group webhook URL format.
+
+## Policy initiative role requirements
+For built-in initiative `924bfe3a-762f-40e7-86dd-5c8b95eb09e6` (`Enable Azure Monitor for VMs with AMA`), the policy assignment managed identity requires both `Contributor` and `User Access Administrator` for remediation/deployment operations.
+
+Reference: https://www.azadvertizer.net/azpolicyinitiativesadvertizer/924bfe3a-762f-40e7-86dd-5c8b95eb09e6.html
+
 ## Manually - Terraform
-1. Remove terraform\vm-monitoring\backend.tf file
-2. *Optional* Update vars.tfvars with your desired information
-3. Fire up a terminal and run ``az login`` and login to your account, and select the subscription you want to deploy to using ``az account set --subscription "My Demos"``
-4. Change directory to \terraform\vm-monitoring
-5. Run ``terraform init`` 
-6. Run ``terraform plan -var-file="vars.tfvars"``
-7. Run ``terraform apply -var-file="vars.tfvars"``
-8. If you do not have a VM to test with, create one
-9. Tag your VM with on of the following tags:
+1. Copy `terraform\vm-monitoring\backend\backend.example.hcl` to an environment specific file, for example `terraform\vm-monitoring\backend\dev.backend.hcl`
+2. Update your backend file with your Terraform state storage details
+3. *Optional* Update vars.tfvars with your desired information
+4. Fire up a terminal and run ``az login`` and login to your account, and select the subscription you want to deploy to using ``az account set --subscription "My Demos"``
+5. Change directory to \terraform\vm-monitoring
+6. Run ``terraform init -backend-config="backend/dev.backend.hcl"``
+7. Run ``terraform plan -var-file="vars.tfvars"``
+8. Run ``terraform apply -var-file="vars.tfvars"``
+9. If you do not have a VM to test with, create one
+10. Tag your VM with on of the following tags:
    - For a CPU alert at 90% usage: ``AlertThreshold-CPU:90``
    - For a Memory alert at 90% usage: ``AlertThreshold-RAM:90``
    - For a Disk alert at 90% for C: and 10% at D:, use: ``AlertThreshold-FreeSpace:C:90;D:10``
    - For a Heartbeat alert after 5 minutes without heartbeats: ``AlertThreshold-Heartbeat:0.00:05:00``   OR   ``AlertThreshold-Heartbeat : 5M``
-10. Make sure your VM actually are above those thresholds, and wait for alerts..
+11. Make sure your VM actually are above those thresholds, and wait for alerts..
